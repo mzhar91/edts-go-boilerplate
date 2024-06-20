@@ -1,0 +1,24 @@
+debug: true
+port: 8080
+database:
+  provider: 'postgres'
+  host: 'localhost'
+  port: 5432
+  user: 'klikapps'
+  password: 'rOyqJh1BAOacHovw'
+  name: 'klik_auth'
+context:
+  timeout: 60
+services:
+  klik-promo:
+    url: ${SERVICES_PROMO_DOMAIN}
+    process-scheduled-status: /internal/scheduler/promo-master/process-scheduled-status
+    process-expired-status: /internal/scheduler/promo-master/process-expired-status
+jwt:
+  private-key: "keys/private.pem",
+  public-key: "keys/public.pem"
+  access-token-expire-period-mobile: 15
+  refresh-token-expire-period-mobile: 43200
+  refresh-token-expire-period-backoffice: 43200
+  access-token-expire-period-backoffice: 15
+timezone: ${TIMEZONE}

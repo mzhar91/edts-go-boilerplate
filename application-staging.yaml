@@ -1,0 +1,10 @@
+debug: true
+port: 8080
+context:
+  timeout: 60
+services:
+  klik-promo:
+    url: ${SERVICES_PROMO_DOMAIN}
+    process-scheduled-status: /internal/scheduler/promo-master/process-scheduled-status
+    process-expired-status: /internal/scheduler/promo-master/process-expired-status
+timezone: ${TIMEZONE}
