@@ -4,10 +4,12 @@
 
 EDTS golang boilerplate
 
-### Built With
+[//]: # (### Built With)
 
-* [![Go][Go.com]][Go-url]
-* [![Echo][Echo.com]][Echo-url]
+[//]: # ()
+[//]: # (* [![Go][Go.com]][Go-url])
+
+[//]: # (* [![Echo][Echo.com]][Echo-url])
 
 <!-- GETTING STARTED -->
 
