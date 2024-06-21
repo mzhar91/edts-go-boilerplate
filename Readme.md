@@ -23,7 +23,7 @@ EDTS golang boilerplate
    ```sh
    git clone https://github.com/mzhar91/edts-go-boilerplate
    ```
-2. Install go packages
+2. Installation
    ```sh
    cd {project_folder} \ 
    && go mod init sg-edts.com/edts-go-boilerplate \ 

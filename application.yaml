@@ -1,12 +1,12 @@
 debug: true
-port: 8080
+port: ${SERVER_PORT:3010}
 database:
-  provider: 'postgres'
-  host: 'localhost'
+  provider: postgres
+  host: localhost
   port: 5432
-  user: 'klikapps'
-  password: 'rOyqJh1BAOacHovw'
-  name: 'klik_auth'
+  user: klikapps
+  password: rOyqJh1BAOacHovw
+  name: klik_auth
 context:
   timeout: 60
 services:
@@ -15,10 +15,10 @@ services:
     process-scheduled-status: /internal/scheduler/promo-master/process-scheduled-status
     process-expired-status: /internal/scheduler/promo-master/process-expired-status
 jwt:
-  private-key: "keys/private.pem",
-  public-key: "keys/public.pem"
+  private-key: key/privatekey.pem
+  public-key: key/publickey.pem
   access-token-expire-period-mobile: 15
   refresh-token-expire-period-mobile: 43200
-  refresh-token-expire-period-backoffice: 43200
-  access-token-expire-period-backoffice: 15
+  refresh-token-expire-period-bo: 43200
+  access-token-expire-period-bo: 15
 timezone: ${TIMEZONE}

@@ -4,12 +4,12 @@ import (
 	"os"
 	"reflect"
 	"regexp"
-	
+
 	"gopkg.in/yaml.v3"
 )
 
 var Cfg = cfg{}
-var reVar = regexp.MustCompile(`^\${(\w+)}$`)
+var reVar = regexp.MustCompile(`^\${(\w+)(:\w+)?}$`)
 
 type cfg struct {
 	Debug    bool     `yaml:"debug"`
@@ -30,8 +30,8 @@ type jwt struct {
 	PublicKey           string `yaml:"public-key"`
 	AccessPeriodMobile  int64  `yaml:"access-token-expire-period-mobile"`
 	RefreshPeriodMobile int64  `yaml:"refresh-token-expire-period-mobile"`
-	AccessPeriodBo      int64  `yaml:"access-token-expire-period-mobile"`
-	RefreshPeriodBo     int64  `yaml:"refresh-token-expire-period-backoffice"`
+	AccessPeriodBo      int64  `yaml:"access-token-expire-period-bo"`
+	RefreshPeriodBo     int64  `yaml:"refresh-token-expire-period-bo"`
 }
 
 type database struct {
@@ -55,12 +55,12 @@ type klikPromo struct {
 
 func LoadEnv() {
 	var file []byte
-	
+
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
-	
+
 	if os.Getenv("ENV") == "production" {
 		file, err = os.ReadFile(wd + "/application.yaml")
 		if err != nil {
@@ -77,12 +77,12 @@ func LoadEnv() {
 			panic(err)
 		}
 	}
-	
+
 	err = yaml.Unmarshal(file, &Cfg)
 	if err != nil {
 		panic(err)
 	}
-	
+
 	_fromenv(&Cfg)
 }
 
@@ -93,20 +93,24 @@ func _fromenv(v interface{}) {
 func _reflectEnv(rv reflect.Value) {
 	for i := 0; i < rv.NumField(); i++ {
 		fv := rv.Field(i)
-		
+
 		if fv.Kind() == reflect.Ptr {
 			fv = fv.Elem()
 		}
-		
+
 		if fv.Kind() == reflect.Struct {
 			_reflectEnv(fv)
 			continue
 		}
-		
+
 		if fv.Kind() == reflect.String {
 			match := reVar.FindStringSubmatch(fv.String())
-			if len(match) > 1 {
-				fv.SetString(os.Getenv(match[1]))
+			if len(match) >= 2 {
+				if match[2] != "" {
+					fv.SetString(match[2][1:])
+				} else {
+					fv.SetString(os.Getenv(match[1]))
+				}
 			}
 		}
 	}
