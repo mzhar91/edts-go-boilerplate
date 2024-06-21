@@ -8,11 +8,10 @@ import (
 
 	"github.com/labstack/echo/v4"
 	_ "github.com/lib/pq"
-
-	// echoSwagger "github.com/swaggo/echo-swagger"
-	// _ "sg-edts.com/edts-go-boilerplate/docs"
+	echoSwagger "github.com/swaggo/echo-swagger"
 
 	_config "sg-edts.com/edts-go-boilerplate/config"
+	_ "sg-edts.com/edts-go-boilerplate/docs"
 	_load "sg-edts.com/edts-go-boilerplate/load"
 	_auth "sg-edts.com/edts-go-boilerplate/pkg/auth"
 	_middleware "sg-edts.com/edts-go-boilerplate/pkg/middleware"
@@ -29,6 +28,16 @@ func init() {
 	}
 }
 
+// @title Swagger EDTS go boilerplate API
+// @version 1.0
+// @description This is a sample server Petstore server.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name Harry K
+// @contact.email k.harry791@gmail.com
+
+// @host localhost:3001
+// @BasePath /
 func main() {
 	dbConn := _config.InitDB()
 	defer func(dbConn *sql.DB) {
@@ -58,8 +67,8 @@ func main() {
 
 	_config.ApiSetup()
 
-	// Swagger
-	// e.GET("/swagger/*", echoSwagger.WrapHandler)
+	// swagger
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	err := e.Start(":" + _config.Cfg.Port)
 	if err != nil {

@@ -1,8 +1,8 @@
 package psql
 
 import (
-	_credential "sg-edts.com/edts-go-boilerplate/data/psql/credential"
-	_session "sg-edts.com/edts-go-boilerplate/data/psql/session"
+	_credential "sg-edts.com/edts-go-boilerplate/repository/credential/psql"
+	_session "sg-edts.com/edts-go-boilerplate/repository/session/psql"
 )
 
 type Repository struct {

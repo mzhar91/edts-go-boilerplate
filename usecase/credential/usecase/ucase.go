@@ -7,13 +7,13 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	
+
 	"github.com/sirupsen/logrus"
-	
+	_credentialRepo "sg-edts.com/edts-go-boilerplate/repository/credential/psql"
+	_sessionRepo "sg-edts.com/edts-go-boilerplate/repository/session/psql"
+
 	_config "sg-edts.com/edts-go-boilerplate/config"
 	_constant "sg-edts.com/edts-go-boilerplate/constant"
-	_credentialRepo "sg-edts.com/edts-go-boilerplate/data/psql/credential"
-	_sessionRepo "sg-edts.com/edts-go-boilerplate/data/psql/session"
 	_apiHelper "sg-edts.com/edts-go-boilerplate/helper/api"
 	_model "sg-edts.com/edts-go-boilerplate/model"
 	_api "sg-edts.com/edts-go-boilerplate/pkg/api"
@@ -48,35 +48,35 @@ func (a *ucase) RefreshToken(ctx context.Context, app string, cCtx *_auth.Claims
 	response := new(_model.SignInResponse)
 	ctx, cancel := context.WithTimeout(ctx, a.contextTimeout)
 	defer cancel()
-	
+
 	// transaction
 	// start
 	err, code := _repository.WithTransaction(
 		a.dbConn, func(tx _repository.Transaction) (error, int) {
 			var duration int64
-			
+
 			conn := &_repository.Use{
 				Trans: tx,
 			}
-			
+
 			claims, _, err, _ := cCtx.Claims()
 			if err != nil {
 				logrus.Errorf("RefreshToken %v", err)
-				
+
 				return err, http.StatusUnauthorized
 			}
-			
+
 			// get by username
 			// start
 			cred, err, errCode := a.getInfo(ctx, conn, claims.Username)
 			if err != nil {
 				logrus.Errorf("RefreshToken %v", err)
-				
+
 				return err, errCode
 			}
 			// get by username
 			// end
-			
+
 			// generate temporary access token
 			// start
 			accessToken, err, _ := cCtx.GenerateAccessToken(
@@ -86,12 +86,12 @@ func (a *ucase) RefreshToken(ctx context.Context, app string, cCtx *_auth.Claims
 			)
 			if err != nil {
 				logrus.Errorf("RefreshToken %v", err)
-				
+
 				return err, http.StatusInternalServerError
 			}
 			// generate temporary access token
 			// end
-			
+
 			if cred.Username != _constant.SystemUsername {
 				// send email
 				// start
@@ -103,7 +103,7 @@ func (a *ucase) RefreshToken(ctx context.Context, app string, cCtx *_auth.Claims
 				// }
 				// send email
 				// end
-				
+
 				// generate access token
 				// start
 				accessToken, err, _ = cCtx.GenerateAccessToken(
@@ -113,24 +113,24 @@ func (a *ucase) RefreshToken(ctx context.Context, app string, cCtx *_auth.Claims
 				)
 				if err != nil {
 					logrus.Errorf("RefreshToken %v", err)
-					
+
 					return err, http.StatusInternalServerError
 				}
 				// generate access token
 				// end
 			}
-			
+
 			// generate refresh token
 			// start
 			refreshToken, err, _ := cCtx.GenerateRefreshToken(cred.UserID.String(), cred.Username, app)
 			if err != nil {
 				logrus.Errorf("RefreshToken %v", err)
-				
+
 				return err, http.StatusInternalServerError
 			}
 			// generate refresh token
 			// end
-			
+
 			if app == "mobile" {
 				duration = _config.Cfg.Jwt.RefreshPeriodMobile
 			} else if app == "bo" {
@@ -138,11 +138,11 @@ func (a *ucase) RefreshToken(ctx context.Context, app string, cCtx *_auth.Claims
 			} else {
 				return fmt.Errorf("app was not declared"), http.StatusInternalServerError
 			}
-			
+
 			response.AccessToken = accessToken
 			response.RefreshToken = refreshToken
 			response.TokenExpiration = time.Now().Add(time.Duration(duration) * time.Minute).Unix()
-			
+
 			return nil, http.StatusOK
 		},
 	)
@@ -150,12 +150,12 @@ func (a *ucase) RefreshToken(ctx context.Context, app string, cCtx *_auth.Claims
 		if a.debug {
 			return nil, _api.WithMessage(code, err.Error(), code), nil
 		}
-		
+
 		return nil, _api.WithMessage(code, _CredentialFailedMsg, code), nil
 	}
 	// transaction
 	// end
-	
+
 	return response, nil, map[string]interface{}{"message": _CredentialSucceedMsg, "code": http.StatusOK}
 }
 
@@ -163,21 +163,21 @@ func (a *ucase) SignIn(ctx context.Context, app string, cCtx *_auth.ClaimsContex
 	response := new(_model.SignInResponse)
 	ctx, cancel := context.WithTimeout(ctx, a.contextTimeout)
 	defer cancel()
-	
+
 	req.Username = strings.TrimSpace(strings.ToLower(req.Username))
-	
+
 	logrus.Infof("SignIn ucase %v", req)
-	
+
 	// transaction
 	// start
 	err, code := _repository.WithTransaction(
 		a.dbConn, func(tx _repository.Transaction) (error, int) {
 			var duration int64
-			
+
 			conn := &_repository.Use{
 				Trans: tx,
 			}
-			
+
 			// verify password
 			// start
 			salt := _security.GenerateSalt(req.Username)
@@ -187,12 +187,12 @@ func (a *ucase) SignIn(ctx context.Context, app string, cCtx *_auth.ClaimsContex
 			)
 			if err != nil {
 				logrus.Errorf("SignIn %v", err)
-				
+
 				return err, http.StatusUnauthorized
 			}
 			// verify password
 			// end
-			
+
 			// update logged in
 			// start
 			err = a.credentialRepo.Update(
@@ -203,12 +203,12 @@ func (a *ucase) SignIn(ctx context.Context, app string, cCtx *_auth.ClaimsContex
 			)
 			if err != nil {
 				logrus.Errorf("SignIn %v", err)
-				
+
 				return err, http.StatusInternalServerError
 			}
 			// update logged in
 			// end
-			
+
 			// generate temporary access token
 			// start
 			accessToken, err, _ := cCtx.GenerateAccessToken(
@@ -218,12 +218,12 @@ func (a *ucase) SignIn(ctx context.Context, app string, cCtx *_auth.ClaimsContex
 			)
 			if err != nil {
 				logrus.Errorf("SignIn %v", err)
-				
+
 				return err, http.StatusInternalServerError
 			}
 			// generate temporary access token
 			// end
-			
+
 			if cred.Username != _constant.SystemUsername {
 				// generate access token
 				// start
@@ -234,24 +234,24 @@ func (a *ucase) SignIn(ctx context.Context, app string, cCtx *_auth.ClaimsContex
 				)
 				if err != nil {
 					logrus.Errorf("SignIn %v", err)
-					
+
 					return err, http.StatusInternalServerError
 				}
 				// generate access token
 				// end
 			}
-			
+
 			// generate refresh token
 			// start
 			refreshToken, err, _ := cCtx.GenerateRefreshToken(cred.UserID.String(), cred.Username, app)
 			if err != nil {
 				logrus.Errorf("SignIn %v", err)
-				
+
 				return err, http.StatusInternalServerError
 			}
 			// generate refresh token
 			// end
-			
+
 			// create session
 			// start
 			err = a.sessionRepo.Create(
@@ -270,12 +270,12 @@ func (a *ucase) SignIn(ctx context.Context, app string, cCtx *_auth.ClaimsContex
 			)
 			if err != nil {
 				logrus.Errorf("SignIn %v", err)
-				
+
 				return err, http.StatusInternalServerError
 			}
 			// create session
 			// end
-			
+
 			if app == "mobile" {
 				duration = _config.Cfg.Jwt.AccessPeriodMobile
 			} else if app == "bo" {
@@ -283,11 +283,11 @@ func (a *ucase) SignIn(ctx context.Context, app string, cCtx *_auth.ClaimsContex
 			} else {
 				return fmt.Errorf("app was not declared"), http.StatusInternalServerError
 			}
-			
+
 			response.AccessToken = accessToken
 			response.RefreshToken = refreshToken
 			response.TokenExpiration = time.Now().Add(time.Duration(duration) * time.Minute).Unix()
-			
+
 			return nil, http.StatusOK
 		},
 	)
@@ -299,23 +299,23 @@ func (a *ucase) SignIn(ctx context.Context, app string, cCtx *_auth.ClaimsContex
 				return nil, _api.WithMessage(code, fmt.Sprintf("%v, %v", _FailedAttempMsg, attempt), code), nil
 			}
 		}
-		
+
 		if a.debug {
 			return nil, _api.WithMessage(code, err.Error(), code), nil
 		}
-		
+
 		return nil, _api.WithMessage(code, _CredentialFailedMsg, code), nil
 	}
 	// transaction
 	// end
-	
+
 	return response, nil, map[string]interface{}{"message": _CredentialSucceedMsg, "code": http.StatusOK}
 }
 
 func (a *ucase) SignOut(ctx context.Context, app string, username string, req *_model.SignOutRequest) (error, map[string]interface{}) {
 	ctx, cancel := context.WithTimeout(ctx, a.contextTimeout)
 	defer cancel()
-	
+
 	// transaction
 	// start
 	err, code := _repository.WithTransaction(
@@ -329,7 +329,7 @@ func (a *ucase) SignOut(ctx context.Context, app string, username string, req *_
 					Value: username,
 				},
 			}
-			
+
 			// get by username
 			// start
 			cred, err := a.credentialRepo.GetByUsername(
@@ -341,7 +341,7 @@ func (a *ucase) SignOut(ctx context.Context, app string, username string, req *_
 			}
 			// get by username
 			// end
-			
+
 			// get session
 			// start
 			session, err := a.sessionRepo.ReadBy(
@@ -353,7 +353,7 @@ func (a *ucase) SignOut(ctx context.Context, app string, username string, req *_
 			}
 			// get session
 			// end
-			
+
 			if len(session) == 1 {
 				err = a.credentialRepo.Update(
 					ctx, conn, cred.ID, &_model.CredentialSetLogOut{
@@ -365,7 +365,7 @@ func (a *ucase) SignOut(ctx context.Context, app string, username string, req *_
 					return err, http.StatusInternalServerError
 				}
 			}
-			
+
 			for _, loopSession := range session {
 				if loopSession.DeviceID == req.DeviceId {
 					// delete session based on device id
@@ -381,7 +381,7 @@ func (a *ucase) SignOut(ctx context.Context, app string, username string, req *_
 					// end
 				}
 			}
-			
+
 			return nil, http.StatusOK
 		},
 	)
@@ -389,12 +389,12 @@ func (a *ucase) SignOut(ctx context.Context, app string, username string, req *_
 		if a.debug {
 			return _api.WithMessage(code, err.Error(), code), nil
 		}
-		
+
 		return _api.WithMessage(code, _SignOutFailedMsg, code), nil
 	}
 	// transaction
 	// end
-	
+
 	return nil, map[string]interface{}{"message": _SignOutSucceedMsg, "code": http.StatusOK}
 }
 
@@ -402,9 +402,9 @@ func (a *ucase) AddCredential(ctx context.Context, app string, claims *_auth.Cla
 	response := new(_model.AddCredentialResponse)
 	ctx, cancel := context.WithTimeout(ctx, a.contextTimeout)
 	defer cancel()
-	
+
 	logrus.Infof("AddCredential ucase %v", req)
-	
+
 	// transaction
 	// start
 	err, code := _repository.WithTransaction(
@@ -412,14 +412,14 @@ func (a *ucase) AddCredential(ctx context.Context, app string, claims *_auth.Cla
 			conn := &_repository.Use{
 				Trans: tx,
 			}
-			
+
 			// generate password
 			// start
 			salt := _security.GenerateSalt(req.Username)
 			hash := _security.Hash(req.Password, salt)
 			// generate password
 			// end
-			
+
 			// update confirm reset password
 			// start
 			err := a.credentialRepo.Create(
@@ -431,14 +431,14 @@ func (a *ucase) AddCredential(ctx context.Context, app string, claims *_auth.Cla
 			)
 			if err != nil {
 				logrus.Errorf("AddCredential %v", err)
-				
+
 				return err, http.StatusInternalServerError
 			}
 			// update confirm reset password
 			// end
-			
+
 			response.Username = req.Username
-			
+
 			return nil, http.StatusOK
 		},
 	)
@@ -446,11 +446,11 @@ func (a *ucase) AddCredential(ctx context.Context, app string, claims *_auth.Cla
 		if a.debug {
 			return nil, _api.WithMessage(code, err.Error(), code), nil
 		}
-		
+
 		return nil, _api.WithMessage(code, _AddCredentialFailedMsg, code), nil
 	}
 	// transaction
 	// end
-	
+
 	return response, nil, map[string]interface{}{"message": _AddCredentialSucceedMsg, "code": http.StatusOK}
 }

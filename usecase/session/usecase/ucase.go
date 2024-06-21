@@ -7,12 +7,12 @@ import (
 	"log"
 	"net/http"
 	"time"
-	
+
 	"github.com/sirupsen/logrus"
-	
+	_credentialRepo "sg-edts.com/edts-go-boilerplate/repository/credential/psql"
+	_sessionRepo "sg-edts.com/edts-go-boilerplate/repository/session/psql"
+
 	_config "sg-edts.com/edts-go-boilerplate/config"
-	_credentialRepo "sg-edts.com/edts-go-boilerplate/data/psql/credential"
-	_sessionRepo "sg-edts.com/edts-go-boilerplate/data/psql/session"
 	_apiHelper "sg-edts.com/edts-go-boilerplate/helper/api"
 	_model "sg-edts.com/edts-go-boilerplate/model"
 	_api "sg-edts.com/edts-go-boilerplate/pkg/api"
@@ -45,7 +45,7 @@ func (a *ucase) GetOwnSession(ctx context.Context, claims *_auth.Claims) ([]*_mo
 	list := make([]*_model.SessionResponse, 0)
 	ctx, cancel := context.WithTimeout(ctx, a.contextTimeout)
 	defer cancel()
-	
+
 	conn := &_repository.Use{
 		Db: a.dbConn,
 	}
@@ -55,16 +55,16 @@ func (a *ucase) GetOwnSession(ctx context.Context, claims *_auth.Claims) ([]*_mo
 			Value: claims.Username,
 		},
 	}
-	
+
 	sessionList, err := a.sessionRepo.ReadBy(
 		ctx, conn, paramList,
 	)
 	if err != nil {
 		log.Printf(err.Error())
-		
+
 		return nil, err
 	}
-	
+
 	for _, value := range sessionList {
 		list = append(
 			list, &_model.SessionResponse{
@@ -84,7 +84,7 @@ func (a *ucase) GetOwnSession(ctx context.Context, claims *_auth.Claims) ([]*_mo
 			},
 		)
 	}
-	
+
 	return list, nil
 }
 
@@ -92,34 +92,34 @@ func (a *ucase) GetSession(ctx context.Context, param *_model.QuerySession) ([]*
 	list := make([]*_model.SessionResponse, 0)
 	ctx, cancel := context.WithTimeout(ctx, a.contextTimeout)
 	defer cancel()
-	
+
 	conn := &_repository.Use{
 		Db: a.dbConn,
 	}
-	
+
 	sessionList, err := a.sessionRepo.Read(
 		ctx, conn, param,
 	)
 	if err != nil {
 		log.Printf(err.Error())
-		
+
 		return nil, 0, err
 	}
-	
+
 	total, err := a.sessionRepo.Total(ctx, conn, param)
 	if err != nil {
 		log.Printf(err.Error())
-		
+
 		return nil, 0, err
 	}
-	
+
 	if param.Page == 0 {
 		param.Page = 1
 	}
 	if param.Limit == 0 {
 		param.Limit = int64(total)
 	}
-	
+
 	for _, value := range sessionList {
 		list = append(
 			list, &_model.SessionResponse{
@@ -139,13 +139,13 @@ func (a *ucase) GetSession(ctx context.Context, param *_model.QuerySession) ([]*
 			},
 		)
 	}
-	
+
 	return list, total, nil
 }
 
 func (a *ucase) DropOwnSession(ctx context.Context, claims *_auth.Claims, param *_model.DropSession) (res string, err error) {
 	var result string
-	
+
 	err, code := _repository.WithTransaction(
 		a.dbConn, func(tx _repository.Transaction) (error, int) {
 			conn := &_repository.Use{
@@ -161,7 +161,7 @@ func (a *ucase) DropOwnSession(ctx context.Context, claims *_auth.Claims, param 
 					Value: param.SessionID,
 				},
 			}
-			
+
 			// get session
 			// start
 			session, err := a.sessionRepo.ReadBy(
@@ -173,7 +173,7 @@ func (a *ucase) DropOwnSession(ctx context.Context, claims *_auth.Claims, param 
 			}
 			// get session
 			// end
-			
+
 			for _, loopSession := range session {
 				// delete session
 				// start
@@ -187,27 +187,27 @@ func (a *ucase) DropOwnSession(ctx context.Context, claims *_auth.Claims, param 
 				// delete session
 				// end
 			}
-			
+
 			return nil, http.StatusOK
 		},
 	)
-	
+
 	if err != nil {
 		if a.debug || code == http.StatusUnprocessableEntity {
 			return result, _api.WithMessage(
 				0, fmt.Sprintf("Remove Order from Account failed caused: %v", err.Error()), code,
 			)
 		}
-		
+
 		return result, _api.WithMessage(0, "Remove Order from Account failed", code)
 	}
-	
+
 	return result, nil
 }
 
 func (a *ucase) DropSession(ctx context.Context, claims *_auth.Claims, param *_model.DropSession) (res string, err error) {
 	var result string
-	
+
 	err, code := _repository.WithTransaction(
 		a.dbConn, func(tx _repository.Transaction) (error, int) {
 			conn := &_repository.Use{
@@ -219,7 +219,7 @@ func (a *ucase) DropSession(ctx context.Context, claims *_auth.Claims, param *_m
 					Value: param.SessionID,
 				},
 			}
-			
+
 			// get session
 			// start
 			session, err := a.sessionRepo.ReadBy(
@@ -231,7 +231,7 @@ func (a *ucase) DropSession(ctx context.Context, claims *_auth.Claims, param *_m
 			}
 			// get session
 			// end
-			
+
 			for _, loopSession := range session {
 				// delete session
 				// start
@@ -245,20 +245,20 @@ func (a *ucase) DropSession(ctx context.Context, claims *_auth.Claims, param *_m
 				// delete session
 				// end
 			}
-			
+
 			return nil, http.StatusOK
 		},
 	)
-	
+
 	if err != nil {
 		if a.debug || code == http.StatusUnprocessableEntity {
 			return result, _api.WithMessage(
 				0, fmt.Sprintf("Remove Order from Account failed caused: %v", err.Error()), code,
 			)
 		}
-		
+
 		return result, _api.WithMessage(0, "Remove Order from Account failed", code)
 	}
-	
+
 	return result, nil
 }

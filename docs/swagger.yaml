@@ -1,0 +1,56 @@
+basePath: /
+definitions:
+  model.AddCredentialRequest:
+    properties:
+      claim:
+        type: string
+      password:
+        type: string
+      requestInfo:
+        $ref: '#/definitions/model.RequestInfo'
+      scope:
+        type: string
+      username:
+        type: string
+    required:
+    - claim
+    - password
+    - scope
+    - username
+    type: object
+  model.RequestInfo:
+    properties:
+      host:
+        type: string
+      ipNumber:
+        type: string
+      userAgent:
+        type: string
+    type: object
+host: localhost:3001
+info:
+  contact:
+    email: k.harry791@gmail.com
+    name: Harry K
+  description: This is a sample server Petstore server.
+  termsOfService: http://swagger.io/terms/
+  title: Swagger EDTS go boilerplate API
+  version: "1.0"
+paths:
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: Add a new credential for user
+      parameters:
+      - description: Add Credential Request
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.AddCredentialRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Add Credential
+swagger: "2.0"
