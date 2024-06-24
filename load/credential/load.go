@@ -3,7 +3,7 @@ package credential
 import (
 	"time"
 
-	"github.com/labstack/echo/v4"
+	"github.com/gofiber/fiber/v2"
 	_credentialPsql "sg-edts.com/edts-go-boilerplate/repository/credential/psql"
 	_sessionPsql "sg-edts.com/edts-go-boilerplate/repository/session/psql"
 
@@ -15,7 +15,7 @@ import (
 	_usecase "sg-edts.com/edts-go-boilerplate/usecase/credential/usecase"
 )
 
-func Load(e *echo.Echo, connection *_config.Connection, timeoutContext time.Duration) {
+func Load(e *fiber.App, connection *_config.Connection, timeoutContext time.Duration) {
 	repo := &_psql.Repository{
 		Credential: _credentialPsql.NewPsqlRepository(),
 		Session:    _sessionPsql.NewPsqlRepository(),

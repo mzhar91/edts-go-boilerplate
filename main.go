@@ -6,9 +6,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/labstack/echo/v4"
+	"github.com/gofiber/fiber/v2"
 	_ "github.com/lib/pq"
-	echoSwagger "github.com/swaggo/echo-swagger"
+	fiberSwagger "github.com/swaggo/fiber-swagger"
 
 	_config "sg-edts.com/edts-go-boilerplate/config"
 	_ "sg-edts.com/edts-go-boilerplate/docs"
@@ -36,7 +36,7 @@ func init() {
 // @contact.name Harry K
 // @contact.email k.harry791@gmail.com
 
-// @host localhost:3001
+// @host localhost:3010
 // @BasePath /
 func main() {
 	dbConn := _config.InitDB()
@@ -53,24 +53,24 @@ func main() {
 
 	connection := _config.Connection{Database: dbConn}
 
-	e := echo.New()
+	app := fiber.New()
 	middL := _middleware.InitMiddleware()
-	e.Use(middL.CORS)
+	app.Use(middL.CORS)
 
 	claims := _auth.InitClaims(_config.Cfg.Debug)
-	e.Use(claims.ClaimsContext)
+	app.Use(claims.ClaimsContext)
 
 	// Get timeoutcontext
 	timeoutContext := _config.GetTimeoutContext()
 
-	_load.Load(e, &connection, timeoutContext)
+	_load.Load(app, &connection, timeoutContext)
 
 	_config.ApiSetup()
 
 	// swagger
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
-	err := e.Start(":" + _config.Cfg.Port)
+	err := app.Listen(":" + _config.Cfg.Port)
 	if err != nil {
 		fmt.Println("Application start up failure")
 

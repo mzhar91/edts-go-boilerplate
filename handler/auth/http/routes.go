@@ -1,21 +1,21 @@
 package http
 
 import (
-	"github.com/labstack/echo/v4"
-	
+	"github.com/gofiber/fiber/v2"
+
 	_credential "sg-edts.com/edts-go-boilerplate/usecase/credential"
 )
 
 // NewHandler represent new handler
-func NewHandler(e *echo.Echo, pu _credential.Usecase) {
+func NewHandler(c *fiber.App, pu _credential.Usecase) {
 	handler := &Handler{
 		CredentialUseCase: pu,
 	}
-	
-	g := e.Group("/auth")
-	g.POST("", handler.addCredential)
-	g.POST("/signin", handler.signIn)
-	g.POST("/signout", handler.signOut)
-	g.GET("/refresh", handler.refreshToken)
-	g.GET("/availability", handler.checkTokenAvailability)
+
+	g := c.Group("/auth")
+	g.Post("", handler.addCredential)
+	g.Post("/signin", handler.signIn)
+	g.Post("/signout", handler.signOut)
+	g.Get("/refresh", handler.refreshToken)
+	g.Get("/availability", handler.checkTokenAvailability)
 }

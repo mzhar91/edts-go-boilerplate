@@ -33,7 +33,12 @@ type ucase struct {
 	apiLibs        _apiHelper.Libs
 }
 
-func NewUcase(psql *_psql.Repository, connection *_config.Connection, timeout time.Duration, apiLibs _apiHelper.Libs) _credential.Usecase {
+func NewUcase(
+	psql *_psql.Repository,
+	connection *_config.Connection,
+	timeout time.Duration,
+	apiLibs _apiHelper.Libs,
+) _credential.Usecase {
 	return &ucase{
 		credentialRepo: psql.Credential,
 		sessionRepo:    psql.Session,
@@ -44,7 +49,11 @@ func NewUcase(psql *_psql.Repository, connection *_config.Connection, timeout ti
 	}
 }
 
-func (a *ucase) RefreshToken(ctx context.Context, app string, cCtx *_auth.ClaimsContext) (*_model.SignInResponse, error, map[string]interface{}) {
+func (a *ucase) RefreshToken(ctx context.Context, app string, cCtx *_auth.ClaimsContext) (
+	*_model.SignInResponse,
+	error,
+	map[string]interface{},
+) {
 	response := new(_model.SignInResponse)
 	ctx, cancel := context.WithTimeout(ctx, a.contextTimeout)
 	defer cancel()
@@ -159,7 +168,12 @@ func (a *ucase) RefreshToken(ctx context.Context, app string, cCtx *_auth.Claims
 	return response, nil, map[string]interface{}{"message": _CredentialSucceedMsg, "code": http.StatusOK}
 }
 
-func (a *ucase) SignIn(ctx context.Context, app string, cCtx *_auth.ClaimsContext, req *_model.SignInRequest) (*_model.SignInResponse, error, map[string]interface{}) {
+func (a *ucase) SignIn(
+	ctx context.Context,
+	app string,
+	cCtx *_auth.ClaimsContext,
+	req *_model.SignInRequest,
+) (*_model.SignInResponse, error, map[string]interface{}) {
 	response := new(_model.SignInResponse)
 	ctx, cancel := context.WithTimeout(ctx, a.contextTimeout)
 	defer cancel()
@@ -256,16 +270,10 @@ func (a *ucase) SignIn(ctx context.Context, app string, cCtx *_auth.ClaimsContex
 			// start
 			err = a.sessionRepo.Create(
 				ctx, conn, &_model.SessionSetLogin{
-					Username:     req.Username,
-					Ip:           req.RequestInfo.IpNumber,
-					UserAgent:    req.RequestInfo.UserAgent,
-					Host:         req.RequestInfo.Host,
-					DeviceID:     req.DeviceId,
-					Scope:        app,
-					AccessToken:  accessToken,
-					RefreshToken: refreshToken,
-					CreatedAt:    time.Now().Unix(),
-					CreatedBy:    req.Username,
+					Username:    req.Username,
+					DeviceID:    req.DeviceId,
+					Scope:       app,
+					CreatedDate: time.Now().String(),
 				},
 			)
 			if err != nil {
@@ -312,7 +320,10 @@ func (a *ucase) SignIn(ctx context.Context, app string, cCtx *_auth.ClaimsContex
 	return response, nil, map[string]interface{}{"message": _CredentialSucceedMsg, "code": http.StatusOK}
 }
 
-func (a *ucase) SignOut(ctx context.Context, app string, username string, req *_model.SignOutRequest) (error, map[string]interface{}) {
+func (a *ucase) SignOut(ctx context.Context, app string, username string, req *_model.SignOutRequest) (
+	error,
+	map[string]interface{},
+) {
 	ctx, cancel := context.WithTimeout(ctx, a.contextTimeout)
 	defer cancel()
 
@@ -398,7 +409,12 @@ func (a *ucase) SignOut(ctx context.Context, app string, username string, req *_
 	return nil, map[string]interface{}{"message": _SignOutSucceedMsg, "code": http.StatusOK}
 }
 
-func (a *ucase) AddCredential(ctx context.Context, app string, claims *_auth.Claims, req *_model.AddCredentialRequest) (*_model.AddCredentialResponse, error, map[string]interface{}) {
+func (a *ucase) AddCredential(
+	ctx context.Context,
+	app string,
+	claims *_auth.Claims,
+	req *_model.AddCredentialRequest,
+) (*_model.AddCredentialResponse, error, map[string]interface{}) {
 	response := new(_model.AddCredentialResponse)
 	ctx, cancel := context.WithTimeout(ctx, a.contextTimeout)
 	defer cancel()

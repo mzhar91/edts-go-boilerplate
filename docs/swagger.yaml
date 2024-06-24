@@ -24,10 +24,8 @@ definitions:
         type: string
       ipNumber:
         type: string
-      userAgent:
-        type: string
     type: object
-host: localhost:3001
+host: localhost:3010
 info:
   contact:
     email: k.harry791@gmail.com
@@ -53,4 +51,15 @@ paths:
       - application/json
       responses: {}
       summary: Add Credential
+      tags:
+      - Auth
+  /healthcheck:
+    get:
+      description: Health check endpoint
+      produces:
+      - application/json
+      responses: {}
+      summary: Health Check
+      tags:
+      - Health Check
 swagger: "2.0"

@@ -11,7 +11,12 @@ import (
 	_repository "sg-edts.com/edts-go-boilerplate/pkg/repository"
 )
 
-func (m *psqlRepository) fetchSingle(ctx context.Context, conn *_repository.Use, query string, args ...interface{}) (*_model.Session, error) {
+func (m *psqlRepository) fetchSingle(
+	ctx context.Context,
+	conn *_repository.Use,
+	query string,
+	args ...interface{},
+) (*_model.Session, error) {
 	var rows *sql.Rows
 	var err error
 
@@ -38,15 +43,10 @@ func (m *psqlRepository) fetchSingle(ctx context.Context, conn *_repository.Use,
 		err = rows.Scan(
 			&t.ID,
 			&t.Username,
-			&t.AccessToken,
-			&t.RefreshToken,
 			&t.Scope,
 			&t.DeviceID,
-			&t.Ip,
-			&t.CreatedBy,
-			&t.CreatedAt,
-			&t.LastModifiedBy,
-			&t.LastModifiedAt,
+			&t.CreatedDate,
+			&t.ModifiedDate,
 		)
 		if err != nil {
 			return nil, err
@@ -58,7 +58,12 @@ func (m *psqlRepository) fetchSingle(ctx context.Context, conn *_repository.Use,
 	return nil, fmt.Errorf("Data Not Found")
 }
 
-func (m *psqlRepository) fetchList(ctx context.Context, conn *_repository.Use, query string, args ...interface{}) ([]*_model.Session, error) {
+func (m *psqlRepository) fetchList(
+	ctx context.Context,
+	conn *_repository.Use,
+	query string,
+	args ...interface{},
+) ([]*_model.Session, error) {
 	var rows *sql.Rows
 	var err error
 
@@ -72,7 +77,12 @@ func (m *psqlRepository) fetchList(ctx context.Context, conn *_repository.Use, q
 		return nil, err
 	}
 
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+
+		}
+	}(rows)
 
 	result := make([]*_model.Session, 0)
 
@@ -82,15 +92,10 @@ func (m *psqlRepository) fetchList(ctx context.Context, conn *_repository.Use, q
 		err = rows.Scan(
 			&t.ID,
 			&t.Username,
-			&t.AccessToken,
-			&t.RefreshToken,
 			&t.Scope,
 			&t.DeviceID,
-			&t.Ip,
-			&t.CreatedBy,
-			&t.CreatedAt,
-			&t.LastModifiedBy,
-			&t.LastModifiedAt,
+			&t.CreatedDate,
+			&t.ModifiedDate,
 		)
 		if err != nil {
 			return nil, err
@@ -102,7 +107,12 @@ func (m *psqlRepository) fetchList(ctx context.Context, conn *_repository.Use, q
 	return result, nil
 }
 
-func (m *psqlRepository) fetchVerifyPassword(ctx context.Context, conn *_repository.Use, query string, args ...interface{}) (*_model.Session, error) {
+func (m *psqlRepository) fetchVerifyPassword(
+	ctx context.Context,
+	conn *_repository.Use,
+	query string,
+	args ...interface{},
+) (*_model.Session, error) {
 	var rows *sql.Rows
 	var err error
 

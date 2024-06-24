@@ -4,12 +4,12 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"strings"
-	
+
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo/v4"
 )
 
-type auth struct {
+type Auth struct {
 	privateKey *rsa.PrivateKey
 	publicKey  *rsa.PublicKey
 	debug      bool
@@ -19,7 +19,7 @@ type ClaimsContext struct {
 	privateKey *rsa.PrivateKey
 	publicKey  *rsa.PublicKey
 	debug      bool
-	echo.Context
+	*fiber.Ctx
 }
 
 type Claims struct {
@@ -47,6 +47,6 @@ func (ms *multiString) UnmarshalJSON(data []byte) error {
 			*ms = multiString(strings.Join(s, ","))
 		}
 	}
-	
+
 	return nil
 }

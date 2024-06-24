@@ -6,48 +6,30 @@ import (
 )
 
 type Session struct {
-	ID             uuid.UUID   `json:"id" db:"id"`
-	Username       string      `json:"username" db:"username"`
-	AccessToken    string      `json:"access_token" db:"access_token"`
-	RefreshToken   string      `json:"refresh_token" db:"refresh_token"`
-	Scope          string      `json:"scope" db:"scope"`
-	DeviceID       string      `json:"device_id" db:"device_id"`
-	Ip             string      `json:"ip" db:"ip"`
-	Host           string      `json:"host" db:"host"`
-	UserAgent      string      `json:"user_agent" db:"user_agent"`
-	CreatedAt      int64       `json:"created_at" db:"created_at"`
-	CreatedBy      string      `json:"created_by" db:"created_by"`
-	LastModifiedBy null.String `json:"last_modified_by" db:"last_modified_by"`
-	LastModifiedAt null.Int    `json:"last_modified_at" db:"last_modified_at"`
+	ID           uuid.UUID   `json:"id" db:"id"`
+	Username     string      `json:"username" db:"username"`
+	Scope        string      `json:"scope" db:"scope"`
+	DeviceID     string      `json:"device_id" db:"device_id"`
+	CreatedDate  string      `json:"created_date" db:"created_date"`
+	ModifiedDate null.String `json:"modified_date" db:"modified_date"`
 }
 
 type SessionResponse struct {
-	ID             uuid.UUID   `json:"id"`
-	Username       string      `json:"username"`
-	AccessToken    string      `json:"access_token"`
-	RefreshToken   string      `json:"refresh_token"`
-	Scope          string      `json:"scope"`
-	DeviceID       string      `json:"device_id"`
-	Ip             string      `json:"ip"`
-	Host           string      `json:"host"`
-	UserAgent      string      `json:"user_agent"`
-	CreatedAt      int64       `json:"created_at"`
-	CreatedBy      string      `json:"created_by"`
-	LastModifiedBy null.String `json:"last_modified_by"`
-	LastModifiedAt null.Int    `json:"last_modified_at"`
+	ID           uuid.UUID   `json:"id"`
+	Username     string      `json:"username"`
+	Scope        string      `json:"scope"`
+	DeviceID     string      `json:"device_id"`
+	CreatedDate  string      `json:"created_date"`
+	ModifiedDate null.String `json:"modified_date"`
 }
 
 type SessionSetLogin struct {
-	Username     string `json:"username" db:"username"`
-	AccessToken  string `json:"access_token" db:"access_token"`
-	RefreshToken string `json:"refresh_token" db:"refresh_token"`
-	Scope        string `json:"scope" db:"scope"`
-	DeviceID     string `json:"device_id" db:"device_id"`
-	Ip           string `json:"ip" db:"ip"`
-	Host         string `json:"host" db:"host"`
-	UserAgent    string `json:"user_agent" db:"user_agent"`
-	CreatedAt    int64  `json:"created_at" db:"created_at"`
-	CreatedBy    string `json:"created_by" db:"created_by"`
+	ID           uuid.UUID   `json:"id" db:"id"`
+	Username     string      `json:"username" db:"username"`
+	Scope        string      `json:"scope" db:"scope"`
+	DeviceID     string      `json:"device_id" db:"device_id"`
+	CreatedDate  string      `json:"created_date" db:"created_date"`
+	ModifiedDate null.String `json:"modified_date" db:"modified_date"`
 }
 
 type QuerySession struct {

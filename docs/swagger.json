@@ -10,7 +10,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:3001",
+    "host": "localhost:3010",
     "basePath": "/",
     "paths": {
         "/auth": {
@@ -21,6 +21,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Auth"
                 ],
                 "summary": "Add Credential",
                 "parameters": [
@@ -34,6 +37,19 @@
                         }
                     }
                 ],
+                "responses": {}
+            }
+        },
+        "/healthcheck": {
+            "get": {
+                "description": "Health check endpoint",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health Check"
+                ],
+                "summary": "Health Check",
                 "responses": {}
             }
         }
@@ -72,9 +88,6 @@
                     "type": "string"
                 },
                 "ipNumber": {
-                    "type": "string"
-                },
-                "userAgent": {
                     "type": "string"
                 }
             }

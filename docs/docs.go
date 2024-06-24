@@ -28,6 +28,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Add Credential",
                 "parameters": [
                     {
@@ -40,6 +43,19 @@ const docTemplate = `{
                         }
                     }
                 ],
+                "responses": {}
+            }
+        },
+        "/healthcheck": {
+            "get": {
+                "description": "Health check endpoint",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health Check"
+                ],
+                "summary": "Health Check",
                 "responses": {}
             }
         }
@@ -79,9 +95,6 @@ const docTemplate = `{
                 },
                 "ipNumber": {
                     "type": "string"
-                },
-                "userAgent": {
-                    "type": "string"
                 }
             }
         }
@@ -91,7 +104,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:3001",
+	Host:             "localhost:3010",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Swagger EDTS go boilerplate API",

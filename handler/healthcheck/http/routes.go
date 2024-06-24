@@ -1,11 +1,11 @@
 package http
 
 import (
-	"github.com/labstack/echo/v4"
+	"github.com/gofiber/fiber/v2"
 )
 
 // NewHandler represent new handler
-func NewHandler(e *echo.Echo) {
+func NewHandler(e *fiber.App) {
 	handler := &Handler{}
-	e.GET("/healthcheck", handler.healthcheck)
+	e.Get("/healthcheck", handler.healthcheck)
 }
