@@ -45,7 +45,6 @@ type AddCredentialRequest struct {
 	Username    string `json:"username" validate:"required,email"`
 	Scope       string `json:"scope" validate:"required"`
 	Password    string `json:"password" validate:"required"`
-	Claim       string `json:"claim" validate:"required"`
 	RequestInfo RequestInfo
 }
 

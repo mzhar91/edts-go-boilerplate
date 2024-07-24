@@ -27,7 +27,7 @@ type Handler struct {
 // @Description Add a new credential for user
 // @Accept  json
 // @Produce  json
-// @Param req body _model.AddCredentialRequest
+// @Param req body _model.AddCredentialRequest true "Add Credential Request"
 // @Router /auth [post]
 func (a *Handler) addCredential(c *fiber.Ctx) error {
 	var req _model.AddCredentialRequest
@@ -73,8 +73,8 @@ func (a *Handler) addCredential(c *fiber.Ctx) error {
 // @Description Sign in user
 // @Accept  json
 // @Produce  json
-// @Param req body _model.SignInRequest
-// @Router /auth [post]
+// @Param req body _model.SignInRequest true "Sign in Request"
+// @Router /signin [post]
 func (a *Handler) signIn(c *fiber.Ctx) error {
 	var req _model.SignInRequest
 

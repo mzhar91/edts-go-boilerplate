@@ -58,21 +58,44 @@ const docTemplate = `{
                 "summary": "Health Check",
                 "responses": {}
             }
+        },
+        "/signin": {
+            "post": {
+                "description": "Sign in user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Sign in",
+                "parameters": [
+                    {
+                        "description": "Sign in Request",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.SignInRequest"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
         }
     },
     "definitions": {
         "model.AddCredentialRequest": {
             "type": "object",
             "required": [
-                "claim",
                 "password",
                 "scope",
                 "username"
             ],
             "properties": {
-                "claim": {
-                    "type": "string"
-                },
                 "password": {
                     "type": "string"
                 },
@@ -94,6 +117,28 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "ipNumber": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SignInRequest": {
+            "type": "object",
+            "required": [
+                "device_id",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "device_id": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "requestInfo": {
+                    "$ref": "#/definitions/model.RequestInfo"
+                },
+                "username": {
                     "type": "string"
                 }
             }

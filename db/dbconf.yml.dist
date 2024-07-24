@@ -1,0 +1,7 @@
+development:
+  driver: postgres
+  open: host=localhost user=eleveniabiz password=eleveniabiz dbname=elevenia_quote sslmode=disable
+
+production:
+  driver: postgres
+  open: host=127.0.0.1 port=3328 user=userprod password=passprod dbname=elevenia_quote sslmode=disable

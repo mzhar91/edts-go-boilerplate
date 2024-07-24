@@ -1,0 +1,3 @@
+development:
+  driver: postgres
+  open: host=localhost port=3328 user=postgres password=El3ven14B2BPr0d!&* dbname=elevenia_quote sslmode=disable

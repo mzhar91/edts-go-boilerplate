@@ -49,6 +49,7 @@ type services struct {
 
 type klikPromo struct {
 	Url                    string `yaml:"url"`
+	Header                 string `yaml:"access-token-header"`
 	ProcessScheduledStatus string `yaml:"process-scheduled-status"`
 	ProcessExpiredStatus   string `yaml:"process-expired-status"`
 }

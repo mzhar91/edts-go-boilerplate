@@ -12,6 +12,7 @@ context:
 services:
   klik-promo:
     url: ${SERVICES_PROMO_DOMAIN}
+    header: access-token-header
     process-scheduled-status: /internal/scheduler/promo-master/process-scheduled-status
     process-expired-status: /internal/scheduler/promo-master/process-expired-status
 jwt:

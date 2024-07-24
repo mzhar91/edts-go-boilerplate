@@ -2,8 +2,6 @@ basePath: /
 definitions:
   model.AddCredentialRequest:
     properties:
-      claim:
-        type: string
       password:
         type: string
       requestInfo:
@@ -13,7 +11,6 @@ definitions:
       username:
         type: string
     required:
-    - claim
     - password
     - scope
     - username
@@ -24,6 +21,21 @@ definitions:
         type: string
       ipNumber:
         type: string
+    type: object
+  model.SignInRequest:
+    properties:
+      device_id:
+        type: string
+      password:
+        type: string
+      requestInfo:
+        $ref: '#/definitions/model.RequestInfo'
+      username:
+        type: string
+    required:
+    - device_id
+    - password
+    - username
     type: object
 host: localhost:3010
 info:
@@ -62,4 +74,22 @@ paths:
       summary: Health Check
       tags:
       - Health Check
+  /signin:
+    post:
+      consumes:
+      - application/json
+      description: Sign in user
+      parameters:
+      - description: Sign in Request
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.SignInRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Sign in
+      tags:
+      - Auth
 swagger: "2.0"
